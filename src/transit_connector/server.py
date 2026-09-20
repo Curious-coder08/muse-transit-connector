@@ -46,7 +46,7 @@ def _safe(fn):
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         try:
-            return fn(*args, **kwargs)
+            result = fn(*args, **kwargs)
         except TransitProviderError as exc:
             return f"⚠️ {exc}"
         except Exception:  # pragma: no cover - defensive
@@ -55,6 +55,9 @@ def _safe(fn):
                 "⚠️ Something went wrong on the connector side. "
                 "Please try again shortly."
             )
+        # Required by the Transitland API terms (transit.land/terms):
+        # end users must see Transitland attribution.
+        return result + "\n\n*Data via Transitland · transit.land/terms*"
 
     return wrapper
 
