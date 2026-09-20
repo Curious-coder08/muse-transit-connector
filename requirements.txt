@@ -1,0 +1,5 @@
+# MCP Python SDK (2.x: FastMCP renamed to MCPServer) + HTTP client.
+mcp>=2.0
+httpx>=0.27
+# Production server for hosted deployment (Railway/Fly.io).
+uvicorn>=0.30
