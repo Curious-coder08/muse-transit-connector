@@ -28,6 +28,10 @@ logger = logging.getLogger("transit_connector")
 
 PROVIDER_ENV = "TRANSIT_PROVIDER"  # "transitland" (default) or "mock"
 
+# Required by the Transitland API terms (https://www.transit.land/terms):
+# end users must see Transitland attribution with a link to the terms.
+ATTRIBUTION = "\n\n*Data via [Transitland](https://www.transit.land/terms).*"
+
 
 def make_provider() -> TransitProvider:
     choice = os.environ.get(PROVIDER_ENV, "transitland").strip().lower()
@@ -47,17 +51,16 @@ def _safe(fn):
     def wrapper(*args, **kwargs):
         try:
             result = fn(*args, **kwargs)
-        except TransitProviderError as exc:
-            return f"⚠️ {exc}"
-        except Exception:  # pragma: no cover - defensive
-            logger.exception("Transit tool failed unexpectedly")
-            return (
-                "⚠️ Something went wrong on the connector side. "
-                "Please try again shortly."
-            )
-        # Required by the Transitland API terms (transit.land/terms):
-        # end users must see Transitland attribution.
-        return result + "\n\n*Data via Transitland · transit.land/terms*"
+except TransitProviderError as exc:
+    return f"⚠️ {exc}" + ATTRIBUTION
+except Exception:  # pragma: no cover - defensive
+    logger.exception("Transit tool failed unexpectedly")
+    return (
+        "⚠️ Something went wrong on the connector side. "
+        "Please try again shortly."
+    ) + ATTRIBUTION
+return result + ATTRIBUTION
+
 
     return wrapper
 
