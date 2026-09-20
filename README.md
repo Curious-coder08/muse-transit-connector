@@ -6,6 +6,7 @@ delays, plan simple direct trips, and check service alerts for any transit
 agency. Built as a connector for Meta's Muse platform
 ([muse.ai/platform](https://muse.ai/platform)).
 
+
 ## What it does
 
 Four tools, usable from any MCP client:
