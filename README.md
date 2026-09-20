@@ -82,53 +82,19 @@ The repo ships a `Dockerfile` plus a production entrypoint
 
 ### Railway (recommended)
 
-1. Create an account at [railway.app](https://railway.app) and push this repo
-   to GitHub.
-2. In Railway: **New Project → Deploy from GitHub repo** — it auto-detects
-   the Dockerfile and builds.
-3. **Settings → Networking → Generate Domain** to get your public URL
-   (e.g. `transit-connector.up.railway.app`).
-4. **Variables** tab — add:
+ 
+1. **Variables** tab — add:
    - `TRANSITLAND_API_KEY` = your key from transit.land (never in code)
    - `ALLOWED_HOSTS` = your Railway domain (no `https://`, no trailing slash)
-5. Railway sets `PORT` automatically; the container listens on `0.0.0.0:$PORT`.
-6. Verify: `https://<your-domain>/mcp` should respond (MCP handshake, not a
+2. Railway sets `PORT` automatically; the container listens on `0.0.0.0:$PORT`.
+3. Verify: `https://<your-domain>/mcp` should respond (MCP handshake, not a
    browser page — a `405`/`400` on plain GET is fine; it means it's alive).
-
-### Any other host (Fly.io, Render, VM, …)
-
-Same idea: build the Dockerfile, set the three env vars above, terminate
-TLS in front of it (Railway/Fly do this for you; on a raw VM use Caddy or
-nginx), and hand Meta the public URL, e.g. `https://transit.example.com/mcp`.
 
 **Why `ALLOWED_HOSTS` matters:** the MCP SDK's DNS-rebinding protection is
 on by default and only trusts `127.0.0.1`. Without your public hostname in
 `ALLOWED_HOSTS`, every request from Meta gets rejected. This is the #1
 gotcha that would fail their end-to-end test.
 
-**Avoid free tiers that sleep** (e.g. Render free): a cold-starting server
-will fail Meta's review probes.
-
-Keep the free-tier rate limits in mind (Transitland throttles aggressively);
-a tiny in-memory cache in front of `get_departures` is the obvious next step
-if review traffic spikes.
-
-## Mapping to the Muse connector submission
-
-Per [muse.ai/platform](https://muse.ai/platform):
-
-1. **Describe your product** — *"Transit Connector: ask your assistant when the
-   next bus/train is, whether your line is disrupted, or how to get across
-   town — live data for 2,000+ agencies via the Transitland registry."*
-2. **Submit for review** — Meta tests functional/security/legal end-to-end.
-   This repo is the thing they test: a hosted MCP server over streamable
-   HTTP, stateless, no user credentials, graceful degradation on feed
-   outages, key sent only as an `apikey` header and never logged.
-3. **Appear in the directory** — users find it in Muse and just ask.
-
-Meta has partnered with Stripe (Link) for in-connector payments; this
-connector needs no payments (public data), so that integration is out of
-scope for v1.
 
 ## Known limitations (v1)
 
