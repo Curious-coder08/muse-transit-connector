@@ -54,3 +54,6 @@ them.
 
 Questions: open an issue at
 <https://github.com/Curious-coder08/muse-transit-connector/issues>.
+
+---
+*Transit data provided by [Transitland](https://www.transit.land/terms). Schedules and realtime information belong to their respective transit agencies — see per-feed license terms at transit.land/terms.*
