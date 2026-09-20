@@ -49,18 +49,19 @@ def _safe(fn):
 
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-try:
-    result = fn(*args, **kwargs)
-except TransitProviderError as exc:
-    return f"⚠️ {exc}" + ATTRIBUTION
-except Exception:  # pragma: no cover - defensive
-    logger.exception("Transit tool failed unexpectedly")
-    return (
-        "⚠️ Something went wrong on the connector side. "
-        "Please try again shortly."
-    ) + ATTRIBUTION
-return result + ATTRIBUTION
-return wrapper
+        try:
+            result = fn(*args, **kwargs)
+        except TransitProviderError as exc:
+            return f"⚠️ {exc}" + ATTRIBUTION
+        except Exception:  # pragma: no cover - defensive
+            logger.exception("Transit tool failed unexpectedly")
+            return (
+                "⚠️ Something went wrong on the connector side. "
+                "Please try again shortly."
+            ) + ATTRIBUTION
+        return result + ATTRIBUTION
+
+    return wrapper
 
 
 # -- formatting helpers -------------------------------------------------
